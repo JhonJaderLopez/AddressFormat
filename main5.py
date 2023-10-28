@@ -14,8 +14,6 @@ def estandarizar_direccion(direccion):
     for palabra in palabras:
         if re.search(patron, palabra):
             palabras_filtradas.append(palabra)
-
-    # Unir las palabras filtradas en una cadena
     direccion_estandarizada = ' '.join(palabras_filtradas)
 
     return direccion_estandarizada
