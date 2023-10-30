@@ -64,25 +64,14 @@ for palabra in palabras:
 resultado = ' '.join(palabras_validas)
 print(resultado)
 """
-cadena = "Calle 68 ENTRE LAS CARRERAS 44 Y 45 H.N. MANRIQUE"
-borrar_palabras = ["Y"]
+import re
 
-palabras = cadena.split()
-if 'ENTRE' in palabras:
-    indice_entre = palabras.index('ENTRE')
-    if 'CARRERAS' in palabras:
-        indice_carreras = palabras.index('CARRERAS')
-        palabras[indice_entre:indice_carreras + 1] = ['']
-    elif 'CALLES' in palabras:
-        indice_calles = palabras.index('CALLES')
-        palabras[indice_entre:indice_calles + 1] = ['']
+direccion_unida = "CARRERA 56C 3 <POR CARRERAS 45 Y 54> <ENTRE CARRERA 45 Y 76"
 
-if 'Y' in palabras:
-    indice_y = palabras.index('Y')
-    palabras = palabras[:indice_y]
-
-direccion_final = ' '.join(palabra for palabra in palabras if palabra)
-print(direccion_final)
+if "<ENTRE" in direccion_unida or "<POR" in direccion_unida:
+    cadena_nueva = direccion_unida.replace("<ENTRE", "ENTRE").replace("<POR", "POR").replace(">", "")
 
 
+
+print(cadena_nueva)
 
