@@ -13,12 +13,64 @@ sustituciones = {
 
 palabras_clave = {"CARRERA", "CALLE", "CIRCULAR", "TRANSVERSAL", "DIAGONAL", "CL", "CR"}
 borrar_palabras = {"CARRERA", "CALLE", "CIRCULAR", "TRANSVERSAL", "DIAGONAL", "CL", "CR","CARRERAS","CALLES","CARREREA"}
-eliminar_caracteres = {";",",","<",">","/","&","-"}
+eliminar_caracteres = {";",",","<",">","/","&"}
 
 def reemplazo(match):
     return sustituciones[match.group()]
 
 def borrar_repetido(direcciones):
+    direccion_limpia = []
+    for direccion in direcciones:
+        # Dividimos la cadena en palabras
+        palabras = direccion.split()
+
+        # Contadores para las coincidencias
+        coincidencias = 0
+
+        # Lista para almacenar las palabras válidas
+        palabras_validas = []
+
+        for palabra in palabras:
+            if palabra in ["CL", "CR", "TV"]:
+                coincidencias += 1
+                if coincidencias == 2:
+                    break  # Detenemos el proceso si encontramos la segunda coincidencia
+            palabras_validas.append(palabra)
+            # Ahora puedes unir las palabras válidas en una cadena nuevamente
+        resultado = ' '.join(palabras_validas)
+        direccion_limpia.append(resultado)
+    return direccion_limpia
+
+def eliminar_palabras(direcciones):
+    direccion_limpia =[]
+    for direccion in direcciones:
+        # Definir un patrón de expresión regular que coincide con "CR," "CL," "TV," "CQ," "SUR," "NORTE", combinaciones alfanuméricas como "80A", "10E" o "5D", y también con combinaciones numéricas como "123"
+        #patron = r'\b(?:CR|CL|TV|CQ|SUR|NORTE|\d{2,3}[A-Z]|\d{1}[A-Z]|\d{1,3})\b'
+        #patron = r'\b(?:CR|CL|TV|CQ|AV|SUR|NORTE|\d{1,3}(?:[A-Z]{1,2})?)\b'
+        #patron = r'\b(?:CR|CL|TV|CQ|AV|SUR|NORTE|\d{1,3}(?:[A-Z]{1,2}|\d{1,4}[A-Z]{1,4})?)\b'
+        patron = r'\b(?:CR|CL|TV|CQ|AV|SUR|NORTE|\d{1,3}(?:[A-Z]{1,4})?)\b'
+
+
+
+        # Dividir la dirección en palabras
+        palabras = direccion.split()
+
+        # Inicializar una lista vacía para las palabras que cumplen con el patrón
+        palabras_filtradas = []
+
+        # Recorrer cada palabra y verificar si cumple con el patrón
+        encontrado = False
+        for palabra in palabras:
+            
+            if re.search(patron, palabra) and encontrado == False:
+                palabras_filtradas.append(palabra)
+            else:
+                encontrado = True
+        direccion_estandarizada = ' '.join(palabras_filtradas)
+        direccion_limpia.append(direccion_estandarizada)
+    return direccion_limpia
+
+def borrar_union(direcciones):
     direccion_limpia=[]
     # Expresión regular para encontrar "CALLE" o "CARRERA" y capturar todo antes de ellos
     pattern = re.compile(r'^(.*?)(CALLE|CARRERA|TORRE|PARQUEADERO)')
@@ -37,7 +89,7 @@ def borrar_entre(direcciones):
 
     for direccion in direcciones:
         palabras = direccion.split()
-        if 'ENTRE' in palabras or 'POR' in palabras:
+        if 'ENTRE' in palabras or 'POR' in palabras or 'CON' in palabras:
             if 'ENTRE' in palabras:
                 indice_entre = palabras.index('ENTRE')
                 if indice_entre > 0 and palabras[indice_entre + 1] in borrar_palabras:
@@ -47,6 +99,7 @@ def borrar_entre(direcciones):
                         palabras = palabras[:indice_y]
                     if 'Y' in palabras:
                         palabras = [palabra for palabra in palabras if palabra != 'Y']
+                        
             if 'POR' in palabras:
                 indice_entre = palabras.index('POR')
                 if indice_entre > 0 and palabras[indice_entre + 1] in borrar_palabras:
@@ -103,6 +156,10 @@ def limpiar_direccion(direcciones):
         #print(direccion)
         if direccion.strip() == "":
             direccion_corta.append(direccion)
+
+        elif direccion.startswith("12"):
+            #cortar el punto y coma hacia la derecha o vaciar con cadena vacia
+            print(direccion)
         elif direccion =="NAN" or direccion=="NULL":
             direccion = ""
             direccion_corta.append(direccion)
@@ -226,13 +283,17 @@ def limpiar_direccion(direcciones):
             
 
     return direccion_corta
-data = pd.read_excel('PRUEBA DIRECCIONES.xlsx', header=None)
+data = pd.read_excel('paq1.xlsx')
+
+ids = data["id"].tolist()
+registros = data["Direccion"].tolist()
 
 lista_de_registros = []
 
-for registro in data.values:
-    registro_completo = ' '.join(map(str, registro))
-    lista_de_registros.append(registro_completo)
+for registro in registros:
+    dire_parse = str(registro)
+    dire_upper = str.upper(dire_parse)
+    lista_de_registros.append(dire_upper)
 
 direccion_estandarizada = limpiar_direccion(lista_de_registros)
 
@@ -245,12 +306,21 @@ for direccion in direccion_estandarizada:
 
 #direccion_sin_entre = borrar_entre(direccion_modificada)
 
-direccion_limpia = borrar_repetido(direccion_modificada)
+direccion_limpia = borrar_union(direccion_modificada)
+direccion_sin_palabras = eliminar_palabras(direccion_limpia)
+direccion_sin_repetir = borrar_repetido(direccion_sin_palabras)
+
 
 wb = openpyxl.Workbook()
 sheet = wb.active
+sheet.cell(row=1, column=1).value = 'ID'  # Nombre de la columna 1
+sheet.cell(row=1, column=2).value = 'Dirección Estandarizada' 
+sheet.cell(row=1, column=3).value = 'Dirección Original' 
 
-for i, dato in enumerate(direccion_limpia):
-    sheet.cell(row=i + 1, column=1).value = dato
 
-wb.save("archivo1.xlsx")
+for i, dato in enumerate(direccion_sin_repetir):
+    sheet.cell(row=i + 2, column=1).value = ids[i]
+    sheet.cell(row=i + 2, column=2).value = dato
+    sheet.cell(row=i + 2, column=3).value = registros[i]
+
+wb.save("archivo_prueba.xlsx")

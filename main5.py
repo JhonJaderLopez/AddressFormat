@@ -1,3 +1,4 @@
+"""
 import re
 
 def estandarizar_direccion(direccion):
@@ -38,3 +39,50 @@ def eliminar_palabras_sobrantes(direcciones):
             direccion_limpia.append(direccion)
         direccion_limpia.append(direccion)
     return direccion_limpia
+
+
+
+    cadena = "CL 32A 76A 32 CL 32A 76A 34 CL 32A 76A 36"
+
+# Dividimos la cadena en palabras
+palabras = cadena.split()
+
+# Contadores para las coincidencias
+coincidencias = 0
+
+# Lista para almacenar las palabras válidas
+palabras_validas = []
+
+for palabra in palabras:
+    if palabra in ["CL", "CR", "TV"]:
+        coincidencias += 1
+        if coincidencias == 2:
+            break  # Detenemos el proceso si encontramos la segunda coincidencia
+    palabras_validas.append(palabra)
+
+# Ahora puedes unir las palabras válidas en una cadena nuevamente
+resultado = ' '.join(palabras_validas)
+print(resultado)
+"""
+cadena = "Calle 68 ENTRE LAS CARRERAS 44 Y 45 H.N. MANRIQUE"
+borrar_palabras = ["Y"]
+
+palabras = cadena.split()
+if 'ENTRE' in palabras:
+    indice_entre = palabras.index('ENTRE')
+    if 'CARRERAS' in palabras:
+        indice_carreras = palabras.index('CARRERAS')
+        palabras[indice_entre:indice_carreras + 1] = ['']
+    elif 'CALLES' in palabras:
+        indice_calles = palabras.index('CALLES')
+        palabras[indice_entre:indice_calles + 1] = ['']
+
+if 'Y' in palabras:
+    indice_y = palabras.index('Y')
+    palabras = palabras[:indice_y]
+
+direccion_final = ' '.join(palabra for palabra in palabras if palabra)
+print(direccion_final)
+
+
+
