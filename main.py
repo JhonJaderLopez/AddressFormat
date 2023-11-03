@@ -19,6 +19,17 @@ eliminar_caracteres = {";",",","<",">","/","&"}
 def reemplazo(match):
     return sustituciones[match.group()]
 
+def vaciar_invalidas(direcciones):
+    direccion_limpia = []
+    for direccion in direcciones:
+        if direccion in palabras_clave:
+            direccion = ""
+            direccion_limpia.append(direccion)
+        else:
+            direccion_limpia.append(direccion)
+
+    return direccion_limpia
+
 def borrar_repetido(direcciones):
     direccion_limpia = []
     for direccion in direcciones:
@@ -74,7 +85,7 @@ def eliminar_palabras(direcciones):
         #patron = r'\b(?:CR|CL|TV|CQ|SUR|NORTE|\d{2,3}[A-Z]|\d{1}[A-Z]|\d{1,3})\b'
         #patron = r'\b(?:CR|CL|TV|CQ|AV|SUR|NORTE|\d{1,3}(?:[A-Z]{1,2})?)\b'
         #patron = r'\b(?:CR|CL|TV|CQ|AV|SUR|NORTE|\d{1,3}(?:[A-Z]{1,2}|\d{1,4}[A-Z]{1,4})?)\b'
-        patron = r'\b(?:CR|CL|TV|CQ|AV|DG|SUR|NORTE|\d{1,3}(?:[A-Z]{1,4})?)\b'
+        patron = r'\b(?:CR|CL|TV|CQ|AV|DG|SUR|ESTE|\d{1,3}(?:[A-Z]{1,4})?)\b'
         # Dividir la dirección en palabras
         palabras = direccion.split()
 
@@ -111,8 +122,8 @@ def borrar_entre(direcciones):
     direcciones_estandarizadas = []
 
     for direccion in direcciones:
-        palabras = direccion.split()
-        if 'ENTRE' in palabras or 'POR' in palabras or 'CON' in palabras:
+        palabras = direccion.split()#ANADIR HACIA
+        if 'ENTRE' in palabras or 'POR' in palabras or 'CON' in palabras or 'CRUCERO' in palabras:
             if 'ENTRE' in palabras:
                 indice_entre = palabras.index('ENTRE')
                 if indice_entre > 0 and (indice_entre + 1) < len(palabras) and palabras[indice_entre + 1] in borrar_palabras:
@@ -124,6 +135,13 @@ def borrar_entre(direcciones):
                         palabras = [palabra for palabra in palabras if palabra != 'Y']
                 elif indice_entre > 0 and (indice_entre + 2) < len(palabras) and palabras[indice_entre + 2] in borrar_palabras:
                     palabras[indice_entre:indice_entre + 3] = ['']
+                    if 'Y' in palabras[indice_entre:]:
+                        indice_y = palabras.index('Y', indice_entre)
+                        palabras = palabras[:indice_y]
+                    if 'Y' in palabras:   #CR 45 ENTRE CALLES 12 Y 13
+                        palabras = [palabra for palabra in palabras if palabra != 'Y']
+                elif indice_entre > 0 and (indice_entre) < len(palabras):
+                    palabras[indice_entre:indice_entre + 1] = ['']
                     if 'Y' in palabras[indice_entre:]:
                         indice_y = palabras.index('Y', indice_entre)
                         palabras = palabras[:indice_y]
@@ -142,6 +160,29 @@ def borrar_entre(direcciones):
                     palabras[indice_entre:indice_entre + 3] = ['']
                     if 'Y' in palabras[indice_entre:]:
                         indice_y = palabras.index('Y', indice_entre)
+                        palabras = palabras[:indice_y]
+                    if 'Y' in palabras:   #CR 45 ENTRE CALLES 12 Y 13
+                        palabras = [palabra for palabra in palabras if palabra != 'Y']
+            if 'CRUCERO' in palabras:
+                indice_entre = palabras.index('CRUCERO')
+                if indice_entre > 0 and (indice_entre + 1) < len(palabras) and palabras[indice_entre + 1] in borrar_palabras:
+                    palabras[indice_entre:indice_entre + 2] = ['']
+                    if 'Y' in palabras[indice_entre:]:
+                        indice_y = palabras.index('Y', indice_entre)
+                        palabras = palabras[:indice_y]
+                    if 'Y' in palabras:
+                        palabras = [palabra for palabra in palabras if palabra != 'Y']
+                elif indice_entre > 0 and (indice_entre + 2) < len(palabras) and palabras[indice_entre + 2] in borrar_palabras:
+                    palabras[indice_entre:indice_entre + 3] = ['']
+                    if 'Y' in palabras[indice_entre:]:
+                        indice_y = palabras.index('Y', indice_entre)
+                        palabras = palabras[:indice_y]
+                    if 'Y' in palabras:   #CR 45 ENTRE CALLES 12 Y 13
+                        palabras = [palabra for palabra in palabras if palabra != 'Y']
+                elif indice_entre > 0 and (indice_entre + 3) < len(palabras) and palabras[indice_entre + 3] in borrar_palabras:
+                    palabras[indice_entre:indice_entre + 4] = ['']
+                    if 'Y' in palabras[indice_entre:]:
+                        indice_y = palabras.index('Y', indice_entre) #Carrera 29 <CRUCERO CON LA CALLE 59 ESQ. N.E.>
                         palabras = palabras[:indice_y]
                     if 'Y' in palabras:   #CR 45 ENTRE CALLES 12 Y 13
                         palabras = [palabra for palabra in palabras if palabra != 'Y']
@@ -188,7 +229,6 @@ def estandarizar_direccion(direcciones):
     return nuevas_direcciones
 
 def limpiar_direccion(direcciones):
-    direccion_limpia = []
     direccion_corta = []
     direccion_split = []
 
@@ -199,10 +239,6 @@ def limpiar_direccion(direcciones):
         #print(direccion)
         if direccion.strip() == "":
             direccion_corta.append(direccion)
-
-        elif direccion.startswith("12"):
-            #cortar el punto y coma hacia la derecha o vaciar con cadena vacia
-            print(direccion)
         elif direccion =="NAN" or direccion=="NULL":
             direccion = ""
             direccion_corta.append(direccion)
@@ -290,36 +326,9 @@ def limpiar_direccion(direcciones):
             if direccion_split[0] in palabras_clave:
                 direccion_unida = " ".join(direccion_split)
 
-                if "<ENTRE" in direccion_unida:
-                    # Reemplaza "<ENTRE" por "ENTRE" y luego reemplaza ">" por una cadena vacía
-                    cadena_nueva = direccion_unida.replace("<ENTRE", "ENTRE").replace(">", "")
+                if "<ENTRE" in direccion_unida or "<POR" in direccion_unida or "<CON" in direccion_unida or "<CRUCERO" in direccion_unida:
+                    cadena_nueva = direccion_unida.replace("<ENTRE", "ENTRE").replace("<POR", "POR").replace("<CON","CON").replace("<CRUCERO","CRUCERO").replace(">", "")
                     
-                    direccion_sin_caracteres = re.compile(r'<[^>]+>')
-                    cadena_sin_contenido = direccion_sin_caracteres.sub('', cadena_nueva)
-                    contenido_entre_parentesis = re.compile(r'\([^)]+\)')
-
-                    cadena_sin_parentesis = contenido_entre_parentesis.sub('', cadena_sin_contenido)
-
-                    for caracter in cadena_sin_parentesis:
-                        if caracter in eliminar_caracteres:
-                            encontrado = True
-                        if not encontrado:
-                            nueva_cadena += caracter
-                elif "<CON" in direccion_unida:
-                    cadena_nueva = direccion_unida.replace("<CON ", "CON").replace(">", "")
-                    direccion_sin_caracteres = re.compile(r'<[^>]+>')
-                    cadena_sin_contenido = direccion_sin_caracteres.sub('', cadena_nueva)
-                    contenido_entre_parentesis = re.compile(r'\([^)]+\)')
-
-                    cadena_sin_parentesis = contenido_entre_parentesis.sub('', cadena_sin_contenido)
-
-                    for caracter in cadena_sin_parentesis:
-                        if caracter in eliminar_caracteres:
-                            encontrado = True
-                        if not encontrado:
-                            nueva_cadena += caracter
-                elif "<POR" in direccion_unida:
-                    cadena_nueva = direccion_unida.replace("<POR", "POR").replace(">", "")
                     direccion_sin_caracteres = re.compile(r'<[^>]+>')
                     cadena_sin_contenido = direccion_sin_caracteres.sub('', cadena_nueva)
                     contenido_entre_parentesis = re.compile(r'\([^)]+\)')
@@ -365,6 +374,10 @@ def limpiar_direccion(direcciones):
                         encontrado = True
                     if not encontrado:
                         nueva_cadena += caracter
+
+                for caracter in nueva_cadena:
+                    if caracter == '-':
+                        print(caracter)
                 direccion_corta.append(nueva_cadena)
             
 
@@ -395,6 +408,7 @@ direccion_sin_cruce = borrar_entre(direccion_modificada)
 direccion_limpia = borrar_union(direccion_sin_cruce)
 direccion_sin_palabras = eliminar_palabras(direccion_limpia)
 direccion_sin_repetir = borrar_repetido(direccion_sin_palabras)
+direccion_vacia = vaciar_invalidas(direccion_sin_repetir)
 
 wb = openpyxl.Workbook()
 sheet = wb.active
@@ -402,9 +416,9 @@ sheet.cell(row=1, column=1).value = 'ID'  # Nombre de la columna 1
 sheet.cell(row=1, column=2).value = 'Dirección Estandarizada' 
 sheet.cell(row=1, column=3).value = 'Dirección Original' 
 
-for i, dato in enumerate(direccion_sin_repetir):
+for i, dato in enumerate(direccion_vacia):
     sheet.cell(row=i + 2, column=1).value = ids[i]
     sheet.cell(row=i + 2, column=2).value = dato
     sheet.cell(row=i + 2, column=3).value = registros[i]
 
-wb.save("archivo_prueba2.xlsx")
+wb.save("archivo_prueba2_paq1.xlsx")

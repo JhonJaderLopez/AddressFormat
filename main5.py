@@ -63,15 +63,96 @@ for palabra in palabras:
 # Ahora puedes unir las palabras válidas en una cadena nuevamente
 resultado = ' '.join(palabras_validas)
 print(resultado)
+
+
+
+#cadena = "CL 93A 83A 04-06-10-12-16-18-22-24-28-30-34-36-40-42-46-48-52-54-58-60-64-66-70-72-76-78-82-84-88-90-94-96-100"
+
+import re
+
+# Definir la cadena de entrada
+cadena = "CL 93A 83A 04-06"
+
+# Usar una expresión regular para encontrar el patrón
+patron = r'\d{2,3}-'
+
+# Buscar la primera coincidencia del patrón en la cadena
+match = re.search(patron, cadena)
+
+if match:
+    # Obtener la posición de inicio de la coincidencia
+    posicion_inicio = match.start()
+
+    # Cortar la cadena desde el principio hasta la posición de inicio
+    nueva_cadena = cadena[:posicion_inicio]
+else:
+    # Si no se encontró ninguna coincidencia, la nueva cadena es la misma que la cadena original
+    nueva_cadena = cadena
+
+print(nueva_cadena)
+
+
+# Definir la cadena de entrada
+# #"CL 93A 83A 04-06-10-12-16-18-22-24-28-30-34-36-40-42-46-48-52-54-58-60-64-66-70-72-76-78-82-84-88-90-94-96-100"
+
+# Definir la cadena de entrada
+
+lista = ["Carrera 45A 102 11(106) <PRIMER PISO>",
+        "<Calle Bolivar entre la terminal del Tranvia del Sur>",
+        "Calle 48 92B 17 <ANTERIOR>;Calle 47F 92B 08 (201,301) <ACTUAL>",
+        "Calle 13 37 46 <ACTUAL>;Calle 13 37 50 <ACTUAL>",
+        "Carrera 50BB 87 24 <ANTERIOR>;Carrera 50BB 87 26 (201,202)",
+        "Calle 96 <ENTRE LAS CARRERAS 47 Y 48 H.N. >",
+        "<calle San Juan media cuadra abajo de Lepelin>",
+        "Carrera 42B 101 33 <PIRMER PISO>",
+        "Carrera 52 55 11;Carrera 52 55 15;Carrera 52 55 19 ;Carrera 52 55 23 Calle;Carrera 52 55 27;Carrera 52 55 03;Calle 55 52 08;Calle 55 52 16;Calle 55 52 20",
+        "Calle 92EE 71 56 <2PISO>",
+        "Carrera 79 49 76;Carrera 79 49 60",
+        "Carrera 71 92BB 49 <PRIMER PISO>",
+        "Calle 76 48A 82",
+        "Calle 15 <ENTRE LAS CARRERAS 75 Y 76 H.S. EL RINCON>",
+        "Calle 39 36A 19 <ACTUAL>",
+        "<Calle Luciano Restrepo entre Carrera basti y Boleras>",
+        "Calle 56E 17A 01",
+        "Calle 2A <ENTRE LAS CARRERAS 86 Y 87 H.S. BELEN>",
+        "<Plazuela Independencia entrando occidental>",
+        "Carrera 30 <ENTRE LAS CALLES 46 Y 47 H.W. BUENOS AIRES>",
+        "Calle 51 33 67 (142);Calle 51 33 67 (141)",]
+
+for elemento in lista:
+    elementos = elemento.split(";")
+    
+    print(elementos)
+
 """
 import re
 
-direccion_unida = "CARRERA 56C 3 <POR CARRERAS 45 Y 54> <ENTRE CARRERA 45 Y 76"
+# Tu cadena de direcciones
+cadenas = ['CR 80 81;CR 80 40;CR 80 50 7;CR 80 50 7;CL 50 80 4']
 
-if "<ENTRE" in direccion_unida or "<POR" in direccion_unida:
-    cadena_nueva = direccion_unida.replace("<ENTRE", "ENTRE").replace("<POR", "POR").replace(">", "")
+# Separar las cadenas por punto y coma
+cadenas_separadas = cadenas[0].split(';')
+
+# Función para calcular la cantidad de palabras en una cadena
+def contar_palabras(cadena):
+    palabras = re.findall(r'\S+', cadena)
+    return len(palabras)
+
+# Inicializar variables para realizar un seguimiento de la cadena más larga y su longitud
+cadena_mas_larga = ""
+longitud_mas_larga = 0
+
+# Iterar a través de las cadenas separadas
+for cadena in cadenas_separadas:
+    num_palabras = contar_palabras(cadena)
+    if num_palabras > longitud_mas_larga:
+        longitud_mas_larga = num_palabras
+        cadena_mas_larga = cadena
+
+print("Cadena con mayor número de palabras:", cadena_mas_larga)
+print("Número de palabras en la cadena más larga:", longitud_mas_larga)
 
 
 
-print(cadena_nueva)
+
 
