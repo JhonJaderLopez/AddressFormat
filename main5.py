@@ -124,33 +124,39 @@ for elemento in lista:
     
     print(elementos)
 
+
+
+    
+direccion_original2 = [
+                       "Carrera 70<ENTRE> Calle 29A<Y>30<ESQUINA ESTE>",
+                       "Carrera 54<ENTRE> Avenida<ORIENTAL Y> CALLE 58A",
+                       "Carrera 85<ENTRE> Calle 34A<Y>35",
+                       "Calle 54<CON> Carrera 38<ESQUINA",
+                       "Calle 49 <25 Y 20 90>",
+                       "Calle 68<con> Carrera 85",
+                       "<Carrera 29A Calle 40 Y 41>",
+                       "Carrera 80C Calle 33 <LOTE 9 MZ 26>"]
+
 """
-import re
+cadena = "hola como estas"
+lista = [cadena]
+print (lista)
 
-# Tu cadena de direcciones
-cadenas = ['CR 80 81;CR 80 40;CR 80 50 7;CR 80 50 7;CL 50 80 4']
 
-# Separar las cadenas por punto y coma
-cadenas_separadas = cadenas[0].split(';')
 
-# Función para calcular la cantidad de palabras en una cadena
-def contar_palabras(cadena):
-    palabras = re.findall(r'\S+', cadena)
-    return len(palabras)
 
-# Inicializar variables para realizar un seguimiento de la cadena más larga y su longitud
-cadena_mas_larga = ""
-longitud_mas_larga = 0
 
-# Iterar a través de las cadenas separadas
-for cadena in cadenas_separadas:
-    num_palabras = contar_palabras(cadena)
-    if num_palabras > longitud_mas_larga:
-        longitud_mas_larga = num_palabras
-        cadena_mas_larga = cadena
 
-print("Cadena con mayor número de palabras:", cadena_mas_larga)
-print("Número de palabras en la cadena más larga:", longitud_mas_larga)
+
+
+
+
+
+
+
+
+
+
 
 
 
