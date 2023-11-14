@@ -349,6 +349,9 @@ def limpiar_direccion(direcciones):
                 direccion = ""
                 direccion_corta.append(direccion)
             elif direccion.startswith("<"):
+                if direccion == "<":
+                    direccion = ""
+                    break
                 contenido = direccion[1:-1]  # Elimina los signos "<" y ">"
                 split_contenido = contenido.split()
                 if split_contenido[0] in palabras_clave:
@@ -439,7 +442,9 @@ def limpiar_direccion(direcciones):
                     if len(cadena_extraida) == 1:
                         cadena_extraida = ' '.join(cadena_extraida)
                         cadena_completa = cadena_restante + cadena_extraida + cadena_restante_externa
-                        print(cadena_completa)
+                    elif cadena_extraida[0] in palabras_clave:
+                        cadena_extraida=' '.join(cadena_extraida)
+                        cadena_completa = cadena_restante + cadena_extraida
                     else: 
                         cadena_extraida = ' '.join(cadena_extraida)
                         if "ENTRE" in cadena_extraida:
@@ -497,7 +502,7 @@ def limpiar_direccion(direcciones):
                     direccion_sin_caracteres = re.compile(r'<[^>]+>')
                     # si dentro de  <> encuentra la palabra carrera,calle,cl...etc no me lo borre
                     # Sustituye el contenido entre '<' y '>' con una cadena vacía
-                    cadena_sin_contenido = direccion_sin_caracteres.sub('', dire_upper)
+                    cadena_sin_contenido = direccion_sin_caracteres.sub('', cadena_completa)
                     contenido_entre_parentesis = re.compile(r'\([^)]+\)')
 
                     # Sustituye el contenido entre paréntesis con una cadena vacía
@@ -513,7 +518,7 @@ def limpiar_direccion(direcciones):
         direccion_limpia.append(nueva_direccion)
     return direccion_limpia
 
-data = pd.read_excel('paq1.xlsx')
+data = pd.read_excel('paq2.xlsx')
 
 ids = data["id"].tolist()
 registros = data["Direccion"].tolist()
@@ -552,4 +557,4 @@ for i, dato in enumerate(direccion_vacia):
     sheet.cell(row=i + 2, column=2).value = dato
     sheet.cell(row=i + 2, column=3).value = registros[i]
 
-wb.save("archivo_prueba2_paq1EXP1.xlsx")
+wb.save("paq2_DIRECCIONES.xlsx")

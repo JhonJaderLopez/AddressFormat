@@ -376,6 +376,9 @@ def limpiar_direccion(direcciones):
                 direccion = ""
                 direccion_corta.append(direccion)
             elif direccion.startswith("<"):
+                if direccion == "<":
+                    direccion = ""
+                    break
                 contenido = direccion[1:-1]  # Elimina los signos "<" y ">"
                 #print(contenido)
                 split_contenido = contenido.split()
@@ -485,7 +488,9 @@ def limpiar_direccion(direcciones):
                     if len(cadena_extraida) == 1:
                         cadena_extraida = ' '.join(cadena_extraida)
                         cadena_completa = cadena_restante + cadena_extraida + cadena_restante_externa
-                        print(cadena_completa)
+                    elif cadena_extraida[0] in palabras_clave:
+                        cadena_extraida=' '.join(cadena_extraida)
+                        cadena_completa = cadena_restante + cadena_extraida
                     else: 
                         cadena_extraida = ' '.join(cadena_extraida)
                         if "ENTRE" in cadena_extraida:
@@ -531,7 +536,7 @@ def limpiar_direccion(direcciones):
                                 nueva_cadena += caracter
                     else:
                         direccion_sin_caracteres = re.compile(r'<[^>]+>')
-                        cadena_sin_contenido = direccion_sin_caracteres.sub('', dire_upper)
+                        cadena_sin_contenido = direccion_sin_caracteres.sub('', cadena_completa)
                         contenido_entre_parentesis = re.compile(r'\([^)]+\)')
 
                         cadena_sin_parentesis = contenido_entre_parentesis.sub('', cadena_sin_contenido)
@@ -568,25 +573,8 @@ def limpiar_direccion(direcciones):
         direccion_limpia.append(nueva_direccion)
     return direccion_limpia
 
-direccion_original2 = [
-                       "Calle 73<CRUCERO> 51C 51C 15"]#validar estos casos raros
-"""
-direccion_original2 = [
-                       "Carrera 70<ENTRE> Calle 29A<Y>30<ESQUINA ESTE>",
-                       "Carrera 54<ENTRE> Avenida<ORIENTAL Y> CALLE 58A",
-                       "Carrera 85<ENTRE> Calle 34A<Y>35",
-                       "Calle 54<CON> Carrera 38<ESQUINA",
-                       "Calle 49 <25 Y 20 90>",
-                       "Calle 68<con> Carrera 85",
-                       "<Carrera 29A Calle 40 Y 41>",
-                       "Carrera 80C Calle 33 <LOTE 9 MZ 26>"
-                       "Calle 72A <ENTRE> Carrera 48A <Y> 49"
-
-
-                       "Calle 33 <ENTRE> Carrera 63B <Y> 60"
-                       "Carrera 43B <CON CALLE 21 PLACAS 18 145 18 115 18 81 18 71>"
-                       "<Calle 83 Carreras 46 y 47>",]   VALIDAR CASOS
-"""
+direccion_original2 = ["Calle 30 <Carrera 75 ESQ. S.W.>",
+                       "Calle 25 <POR CARRERA > 65D <ESQUINA>"]#validar estos casos raros
 
 direccion_estandarizada = limpiar_direccion(direccion_original2)
 
